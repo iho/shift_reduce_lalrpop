@@ -1,3 +1,3 @@
-# PHP AST Parser in Rust
+# Shift / Reduct example for lalropo (rust)
 
-this project is work in progress. i am playing with parsing php asts in rust.
+take a look at src/calculator1.lalrpop and main.rs
