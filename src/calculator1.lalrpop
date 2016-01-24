@@ -1,0 +1,41 @@
+use std::str::FromStr;
+use ast::{Expression};
+
+grammar;
+
+Num: i32 = {
+    r"[0-9]+" => i32::from_str(<>).unwrap()
+};
+
+
+// everytime we define the current expression (expr1) on the left side
+// the first step is to define
+pub expr : Box<Expression> = {
+    <left:expr> <op:"=="> <right:expr1> => { Box::new(Expression::ExpressionOp { op: op.to_string(), left: left, right: right }) },
+    expr1 => <>
+};
+
+expr1 : Box<Expression> = {
+    // same as current on the left side ...
+    // and on the right side the expression with the higher priority ("+", "-" are less important than "*", "/" AND expr3)
+    <left:expr1> <op:"+"> <right:expr2> => { Box::new(Expression::ExpressionOp { op: op.to_string(), left: left, right: right }) },
+    <left:expr1> <op:"-"> <right:expr2> => { Box::new(Expression::ExpressionOp { op: op.to_string(), left: left, right: right }) },
+    // everytime the expression with the higher priority must be defined as last line.
+    expr2 => <>
+};
+
+expr2 : Box<Expression> = {
+    // same as above, current expression is on the left side
+    // the "more important"  expression is on the right side ("*", "/" are less important than expr3)
+    <left:expr2> <op:"*"> <right:expr3> => { Box::new(Expression::ExpressionOp { op: op.to_string(), left: left, right: right  }) },
+    <left:expr2> <op:"/"> <right:expr3> => { Box::new(Expression::ExpressionOp { op: op.to_string(), left: left, right: right  }) },
+    // and again we define the expression with the higher priority as last line.
+    expr3 => <>
+};
+
+expr3 : Box<Expression> = {
+    <a:"("> <expr:expr> <b:")"> => { expr },
+    <a:"++("> <expr:expr> <b:")"> => { Box::new(Expression::Increment(expr)) },
+    <op:"++"> <num:Num> => { Box::new(Expression::Increment(Box::new(Expression::Num(num)))) },
+    Num => Box::new(Expression::Num(<>))
+};

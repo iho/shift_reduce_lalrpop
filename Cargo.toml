@@ -1,0 +1,11 @@
+[package]
+name = "hello_nom"
+version = "0.1.0"
+authors = ["timglabisch <tim@ainfach.de>"]
+build = "build.rs"
+
+[build-dependencies]
+lalrpop = "0.7.0"
+
+[dependencies]
+lalrpop-util = "0.7.0"
