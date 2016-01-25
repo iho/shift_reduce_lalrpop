@@ -11,7 +11,7 @@ Num: i32 = {
 // everytime we define the current expression (expr1) on the left side
 // the first step is to define
 pub expr : Box<Expression> = {
-    <left:expr> <op:"=="> <right:expr1> => { Box::new(Expression::ExpressionOp { op: op.to_string(), left: left, right: right }) },
+    <left:expr1> <op:"=="> <right:expr1> => { Box::new(Expression::ExpressionOp { op: op.to_string(), left: left, right: right }) },
     expr1 => <>
 };
 
@@ -35,7 +35,7 @@ expr2 : Box<Expression> = {
 
 expr3 : Box<Expression> = {
     <a:"("> <expr:expr> <b:")"> => { expr },
-    <a:"++("> <expr:expr> <b:")"> => { Box::new(Expression::Increment(expr)) },
+    <a:"++"> <b:"("> <expr:expr> <c:")"> => { Box::new(Expression::Increment(expr)) },
     <op:"++"> <num:Num> => { Box::new(Expression::Increment(Box::new(Expression::Num(num)))) },
     Num => Box::new(Expression::Num(<>))
 };
