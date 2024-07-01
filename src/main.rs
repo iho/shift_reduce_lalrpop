@@ -1,11 +1,15 @@
-pub mod calculator1; // synthesized by LALRPOP
 pub mod tokens;
 pub mod ast;
 
-fn parse_expr(expr : &str) -> String {
-    format!("{}", calculator1::parse_expr(expr).unwrap())
-}
+extern crate lalrpop_util;
+use lalrpop_util::lalrpop_mod;
 
+lalrpop_mod!(pub calculator1);
+
+
+fn parse_expr(expr : &str) -> String {
+    format!("{}", calculator1::exprParser::new().parse(expr).unwrap())
+}
 fn main() {
 
     assert_eq!("1", parse_expr("1"));
@@ -32,10 +36,10 @@ fn main() {
 
     assert_eq!("(((1 / 2) + 3) == (1 + (2 * 3)))", parse_expr("1 / 2 + 3 == 1 + 2 * 3"));
 
-    assert!(calculator1::parse_expr("1 == 1").is_ok());
-    assert!(calculator1::parse_expr("((1 / 2) + 3) == ((1 * 2) + 3)").is_ok());
-    assert!(calculator1::parse_expr("((1 + 2) + 3) == ((1 - 2) + 3)").is_ok());
-    assert!(calculator1::parse_expr("1 == 1 == 1").is_err());
+    assert!(calculator1::exprParser::new().parse("1 == 1").is_ok());
+    assert!(calculator1::exprParser::new().parse("((1 / 2) + 3) == ((1 * 2) + 3)").is_ok());
+    assert!(calculator1::exprParser::new().parse("((1 + 2) + 3) == ((1 - 2) + 3)").is_ok());
+    assert!(calculator1::exprParser::new().parse("1 == 1 == 1").is_err());
 
     // testing ++
     assert_eq!("(((1 + (++2)) + ((3 * 4) * (++5))) + 6)", parse_expr("1 + ++2 + 3 * 4 * ++5 + 6"));
